@@ -1,0 +1,73 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Alert Operations API - API Gateway, Java Lambda, and least-privilege Secrets Manager access
+
+Parameters:
+  StageName:
+    Type: String
+    Default: dev
+    AllowedPattern: '^[a-z0-9-]+$'
+    Description: API Gateway stage name.
+  DatabaseSecretArn:
+    Type: String
+    Description: Exact ARN of the database connection secret. The JSON secret must expose url, username, and password.
+    AllowedPattern: '^arn:(aws|aws-us-gov|aws-cn):secretsmanager:[a-z0-9-]+:[0-9]{12}:secret:.+$'
+  AllowedOrigin:
+    Type: String
+    Default: http://localhost:3000
+    Description: Single approved browser origin for the API CORS policy.
+
+Globals:
+  Function:
+    Runtime: java21
+    MemorySize: 1024
+    Timeout: 15
+    Tracing: Active
+    Environment:
+      Variables:
+        APP_DATABASE_SECRET_ARN: !Ref DatabaseSecretArn
+        FRONTEND_ORIGIN: !Ref AllowedOrigin
+
+Resources:
+  AlertOperationsApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      Name: !Sub alert-operations-${StageName}
+      StageName: !Ref StageName
+      TracingEnabled: true
+      Cors:
+        AllowOrigin: !Sub "'${AllowedOrigin}'"
+        AllowMethods: "'GET,POST,OPTIONS'"
+        AllowHeaders: "'Content-Type'"
+
+  AlertOperationsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub alert-operations-${StageName}
+      CodeUri: ../backend/
+      Handler: com.arnold.alertoperations.lambda.StreamLambdaHandler::handleRequest
+      Description: Spring Boot operational alerts API
+      Events:
+        ApiRequest:
+          Type: Api
+          Properties:
+            RestApiId: !Ref AlertOperationsApi
+            Path: /{proxy+}
+            Method: any
+      Policies:
+        - Version: '2012-10-17'
+          Statement:
+            - Sid: ReadOnlyConfiguredDatabaseSecret
+              Effect: Allow
+              Action:
+                - secretsmanager:GetSecretValue
+              Resource: !Ref DatabaseSecretArn
+
+Outputs:
+  ApiBaseUrl:
+    Description: Base URL of the operational alerts API.
+    Value: !Sub https://${AlertOperationsApi}.execute-api.${AWS::Region}.amazonaws.com/${StageName}
+  FunctionName:
+    Description: Lambda function name.
+    Value: !Ref AlertOperationsFunction
+
