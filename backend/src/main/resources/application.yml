@@ -1,0 +1,37 @@
+spring:
+  application:
+    name: alert-operations-api
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    open-in-view: false
+  sql:
+    init:
+      mode: always
+  jpa.defer-datasource-initialization: true
+
+server:
+  port: ${PORT:8080}
+  error:
+    include-message: never
+    include-stacktrace: never
+
+app:
+  cors:
+    allowed-origin: ${FRONTEND_ORIGIN:http://localhost:3000}
+  database:
+    url: ${DATABASE_URL:jdbc:h2:mem:alertoperations;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE}
+    username: ${DATABASE_USERNAME:sa}
+    password: ${DATABASE_PASSWORD:}
+    secret-arn: ${DB_SECRET_ARN:}
+    aws-region: ${AWS_REGION:us-east-1}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: never
+

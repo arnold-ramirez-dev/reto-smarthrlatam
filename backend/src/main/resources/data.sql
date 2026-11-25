@@ -1,0 +1,3 @@
+INSERT INTO orders (id, created_at) VALUES ('ORD-1001', CURRENT_TIMESTAMP);
+INSERT INTO orders (id, created_at) VALUES ('ORD-2001', CURRENT_TIMESTAMP);
+
