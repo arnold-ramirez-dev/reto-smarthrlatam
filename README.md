@@ -29,7 +29,7 @@ cd backend
 ```
 
 On Windows, use `mvnw.cmd spring-boot:run`. The API starts on `http://localhost:8080`. Health is available at `GET /actuator/health`.
-The default settings use H2. To override them, export `DATABASE_URL`, `DATABASE_USERNAME`, and `DATABASE_PASSWORD` in your shell; `.env.example` documents the available names without storing values.
+The default settings use H2. To override them, export `DATABASE_URL`, `DATABASE_USERNAME`, and `DATABASE_PASSWORD` in your shell.
 
 ### 2. Run the frontend
 
