@@ -3,6 +3,7 @@ package com.arnold.alertoperations.alerts.web;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -86,6 +87,13 @@ class AlertsControllerTest {
                 .andExpect(jsonPath("$.code").value("PERSISTENCE_ERROR"))
                 .andExpect(jsonPath("$.message").value("The request could not be completed"))
                 .andExpect(jsonPath("$.message").value(org.hamcrest.Matchers.not(org.hamcrest.Matchers.containsString("password"))));
+    }
+
+    @Test
+    void returnsNotFoundForAnUnmappedStaticResource() throws Exception {
+        mockMvc.perform(get("/favicon.ico"))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.code").value("RESOURCE_NOT_FOUND"));
     }
 
     @TestConfiguration

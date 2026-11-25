@@ -18,6 +18,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 @RestControllerAdvice
 public class ApiExceptionHandler {
@@ -50,6 +51,11 @@ public class ApiExceptionHandler {
     @ExceptionHandler(OrderNotFoundException.class)
     ResponseEntity<ApiError> handleOrderNotFound(OrderNotFoundException exception, HttpServletRequest request) {
         return respond(HttpStatus.NOT_FOUND, "ORDER_NOT_FOUND", "The requested order does not exist", request, Map.of());
+    }
+
+    @ExceptionHandler(NoResourceFoundException.class)
+    ResponseEntity<ApiError> handleResourceNotFound(NoResourceFoundException exception, HttpServletRequest request) {
+        return respond(HttpStatus.NOT_FOUND, "RESOURCE_NOT_FOUND", "The requested resource does not exist", request, Map.of());
     }
 
     @ExceptionHandler(PersistenceOperationException.class)
