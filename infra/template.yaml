@@ -25,7 +25,7 @@ Globals:
     Tracing: Active
     Environment:
       Variables:
-        APP_DATABASE_SECRET_ARN: !Ref DatabaseSecretArn
+        DB_SECRET_ARN: !Ref DatabaseSecretArn
         FRONTEND_ORIGIN: !Ref AllowedOrigin
 
 Resources:

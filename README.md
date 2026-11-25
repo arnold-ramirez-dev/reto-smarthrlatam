@@ -75,7 +75,14 @@ The API returns one stable error envelope: `timestamp`, `status`, `code`, `messa
 }
 ```
 
-The template is intentionally a deployable backend reference, not a fake end-to-end RDS stack. A real RDS deployment also needs VPC and security-group ownership decisions; see [ARCHITECTURE.md](ARCHITECTURE.md).
+To package and deploy the backend reference, install the AWS SAM CLI and run from the repository root:
+
+```bash
+sam build --template-file infra/template.yaml
+sam deploy --guided --template-file .aws-sam/build/template.yaml
+```
+
+During guided deployment, provide the existing database secret ARN for `DatabaseSecretArn` and the deployed frontend URL for `AllowedOrigin`. The database must be reachable from Lambda (for example, through the organization's VPC and RDS Proxy); network resources remain owned by the target AWS environment rather than being invented by this challenge stack. See [ARCHITECTURE.md](ARCHITECTURE.md).
 
 ## Repository layout
 
